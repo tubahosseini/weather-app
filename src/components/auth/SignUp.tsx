@@ -1,88 +1,101 @@
-import * as React from "react";
-import {
-  Avatar,
-  Button,
-  //   CssBaseline,
-  TextField,
-  //   Paper,
-  Box,
-  Grid,
-  Typography,
-} from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-// import thunder from "../../assets/thunder.jpg";
+import { useState } from "react";
+import { Button, TextField, Box, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const SignUp: React.FC = () => {
+export default function SignUp() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-      confirmPassword: data.get("confirmPassword"),
-    });
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5000/users", formData);
+      navigate("/Weather");
+    } catch (error) {
+      console.error("There was an error creating the account!", error);
+    }
   };
 
   return (
     <>
-      <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-        <LockOutlinedIcon />
-      </Avatar>
       <Typography component="h1" variant="h5">
-        Sign up
+        Create new account.
       </Typography>
-      <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Email Address"
-          name="email"
-          autoComplete="email"
-          autoFocus
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="new-password"
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="confirmPassword"
-          label="Confirm Password"
-          type="password"
-          id="confirmPassword"
-          autoComplete="new-password"
-        />
+      <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              autoComplete="given-name"
+              name="firstName"
+              required
+              fullWidth
+              id="firstName"
+              label="First Name"
+              autoFocus
+              value={formData.firstName}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              fullWidth
+              id="lastName"
+              label="Last Name"
+              name="lastName"
+              autoComplete="family-name"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </Grid>
+        </Grid>
         <Button
           type="submit"
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Sign Up
+          Create account
         </Button>
-        <Grid container>
-          <Grid item>
-            <Button onClick={() => navigate("?mode=signin")}>
-              Already have an account? Sign In
-            </Button>
-          </Grid>
-        </Grid>
+        <Button onClick={() => navigate("?mode=signin")} fullWidth>
+          Already have an account? Sign in
+        </Button>
       </Box>
     </>
   );
-};
-
-export default SignUp;
+}

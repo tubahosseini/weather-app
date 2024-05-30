@@ -1,5 +1,6 @@
-import { CssBaseline, Paper, Box, Grid } from "@mui/material";
+import { Paper, Box, Grid } from "@mui/material";
 import thunder from "../../assets/thunder.jpg";
+import rain from "../../assets/rain.jpg";
 import { useLocation } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
@@ -11,12 +12,11 @@ export default function Auth() {
 
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
-      <CssBaseline />
       {mode === "signup" ? (
         <>
           <Grid
             item
-            xs={12}
+            xs={14}
             sm={8}
             md={5}
             component={Paper}
@@ -41,7 +41,7 @@ export default function Auth() {
             sm={4}
             md={7}
             sx={{
-              backgroundImage: `url(${thunder})`,
+              backgroundImage: `url(${rain})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
@@ -62,7 +62,7 @@ export default function Auth() {
           />
           <Grid
             item
-            xs={12}
+            xs={14}
             sm={8}
             md={5}
             component={Paper}
