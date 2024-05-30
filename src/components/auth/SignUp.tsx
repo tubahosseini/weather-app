@@ -21,7 +21,8 @@ export default function SignUp() {
     e.preventDefault();
     try {
       await axios.post("http://localhost:5000/users", formData);
-      navigate("/Weather");
+      alert("sign up successfull. Please sign in now :)");
+      navigate("?mode=signin");
     } catch (error) {
       console.error("There was an error creating the account!", error);
     }
