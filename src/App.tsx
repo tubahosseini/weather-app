@@ -1,7 +1,15 @@
-import AuthPage from "./pages/auth-page/AuthPage";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Auth from "./components/auth/Auth";
 
-function App() {
-  return <AuthPage />;
-}
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Auth />} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;
