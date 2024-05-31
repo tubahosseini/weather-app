@@ -14,9 +14,9 @@ export default function SignIn() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
+  //use json server filter to do the search for SURE!!!!
   const handleSubmit = async (e: any) => {
-    e.preventDefault();
+    e.preventDefault(); // stop the page from refreshing !  //use react hook Form instead!
     try {
       const response = await axios.get("http://localhost:5000/users");
       const users = response.data;
@@ -36,16 +36,34 @@ export default function SignIn() {
 
   return (
     <>
-      <Typography component="h1" variant="h5">
+      <Typography
+        component="h1"
+        variant="h5"
+        sx={{ color: "#fff", fontSize: "30px", fontWeight:'bold', marginY: '32px' }}
+      >
         Sign in.
       </Typography>
       <Box component="form" marginTop={1} onSubmit={handleSubmit}>
         <TextField
           margin="normal"
           required
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: '#666', // Hover border color
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#666', // Focused border color
+              },
+            },
+          }}
           fullWidth
           label="Email Address"
           name="email"
+          InputLabelProps={{ style: { color: "#fff" } }}
+          InputProps={{
+            style: { color: "#fff" },
+          }}
           autoComplete="email"
           autoFocus
           value={formData.email}
@@ -54,10 +72,24 @@ export default function SignIn() {
         <TextField
           margin="normal"
           required
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: '#666', // Hover border color
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#666', // Focused border color
+              },
+            },
+          }}
           fullWidth
           name="password"
           label="Password"
           type="password"
+          InputLabelProps={{ style: { color: "#fff" } }}
+          InputProps={{
+            style: { color: "#fff" },
+          }}
           autoComplete="current-password"
           value={formData.password}
           onChange={handleChange}
@@ -66,14 +98,106 @@ export default function SignIn() {
           type="submit"
           fullWidth
           variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          sx={{ mt: 3, mb: 2, color: "#fff", backgroundColor: "#c73659", '&:hover':{backgroundColor:'#c73659d4'} }}
         >
           Sign In
         </Button>
-        <Button fullWidth onClick={() => navigate("?mode=signup")}>
+        <Button
+          fullWidth
+          sx={{ color: "#fff" }}
+          onClick={() => navigate("?mode=signup")}
+        >
           Don't have an account? Sign Up
         </Button>
       </Box>
     </>
   );
 }
+
+// import { useState } from 'react';
+// import { Button, TextField, Box, Typography } from "@mui/material";
+// import { useNavigate } from "react-router-dom";
+// import axios from 'axios';
+
+// export default function SignIn() {
+//   const navigate = useNavigate();
+//   const [formData, setFormData] = useState({
+//     email: '',
+//     password: ''
+//   });
+
+//   const handleChange = (e:any) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const handleSubmit = async (e:any) => {
+//     e.preventDefault();
+//     try {
+//       const response = await axios.get('http://localhost:3001/users');
+//       const users = response.data;
+//       const user = users.find(
+//         (user:any) => user.email === formData.email && user.password === formData.password
+//       );
+//       if (user) {
+//         alert('Sign in successful!');
+//         navigate("/weatherPage");
+//       } else {
+//         alert('Invalid email or password.');
+//       }
+//     } catch (error) {
+//       console.error('There was an error signing in!', error);
+//     }
+//   };
+
+//   return (
+//     <>
+//       <Typography component="h1" variant="h5" sx={{ color: '#fff' }}>
+//         Sign in.
+//       </Typography>
+//       <Box component="form" marginTop={1} onSubmit={handleSubmit}>
+//         <TextField
+//           margin="normal"
+//           required
+//           fullWidth
+//           label="Email Address"
+//           name="email"
+//           autoComplete="email"
+//           autoFocus
+//           value={formData.email}
+//           onChange={handleChange}
+//           InputLabelProps={{ style: { color: '#fff' } }}
+//           InputProps={{
+//             style: { color: '#fff' },
+//           }}
+//         />
+//         <TextField
+//           margin="normal"
+//           required
+//           fullWidth
+//           name="password"
+//           label="Password"
+//           type="password"
+//           autoComplete="current-password"
+//           value={formData.password}
+//           onChange={handleChange}
+//           InputLabelProps={{ style: { color: '#fff' } }}
+//           InputProps={{
+//             style: { color: '#fff' },
+//           }}
+//         />
+//         <Button
+//           type="submit"
+//           fullWidth
+//           variant="contained"
+//           sx={{ mt: 3, mb: 2, color: '#fff' }}
+//         >
+//           Sign In
+//         </Button>
+//         <Button onClick={() => navigate("?mode=signup")} fullWidth sx={{ color: '#fff' }}>
+//           Don't have an account? Sign Up
+//         </Button>
+//       </Box>
+//     </>
+//   );
+// }
