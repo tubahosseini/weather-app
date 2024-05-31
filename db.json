@@ -8,46 +8,11 @@
       "id": 1
     },
     {
-      "firstName": "mohammad",
-      "lastName": "rezaei",
-      "email": "mohammad@gmail.com",
-      "password": "mohammad",
-      "id": 2
-    },
-    {
-      "firstName": "mohammad",
-      "lastName": "rezaei",
-      "email": "mohammad@gmail.com",
-      "password": "mohammad",
-      "id": 3
-    },
-    {
-      "firstName": "ali",
-      "lastName": "ahmadi",
-      "email": "ali@gmail.com",
-      "password": "aliali",
-      "id": 4
-    },
-    {
-      "firstName": "mona",
-      "lastName": "shoomali",
-      "email": "monashoomali@gmail.com",
-      "password": "monamona",
-      "id": 5
-    },
-    {
-      "firstName": "talaye",
-      "lastName": "hosseini",
-      "email": "talaye@gmail.com",
-      "password": "talayetalaye",
-      "id": 6
-    },
-    {
       "firstName": "tina",
       "lastName": "tina",
       "email": "tina",
       "password": "tina",
-      "id": 7
+      "id": 2
     }
   ]
 }

@@ -29,7 +29,8 @@ html, body {
 }
 
 body {
-  background: linear-gradient(#333, #000);
+  background: linear-gradient(#484848, #000);
+  /* background: linear-gradient(#2bb3edb3, #0c326a); */
   text-align: center;
   vertical-align: middle;
 }
