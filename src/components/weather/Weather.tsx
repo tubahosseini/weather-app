@@ -4,9 +4,17 @@ import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import RecentlySearched from "../recently-searched/RecentlySearched";
 
-export default function Weather() {
-  const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
+const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+];
+const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
 
+export default function Weather() {
   const data = {
     labels: ["", "", "", "", "", ""], // Empty labels for no numbers
     datasets: [
@@ -58,10 +66,9 @@ export default function Weather() {
         textShadow: "0px 0px 10px rgba(0,0,0,0.5)",
       }}
     >
-      {/* here is the background */}
       <Box className="clouds-3"></Box>
       <Box sx={{ position: "absolute", top: 16, left: 16 }}>
-        <IconButton aria-label="delete">
+        <IconButton aria-label="logout">
           <LogoutIcon />
         </IconButton>
       </Box>
@@ -75,105 +82,49 @@ export default function Weather() {
           <Typography variant="h6">Stormy with partly cloudy</Typography>
           <Box sx={{ width: "100%", mt: 4 }}>
             <Grid container justifyContent="space-evenly">
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="subtitle2" marginTop={20}>
-                    Sunday
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="subtitle2" marginTop={20}>
-                    Monday
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="subtitle2" marginTop={20}>
-                    Tuesday
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="subtitle2" marginTop={20}>
-                    Wednesday
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="subtitle2" marginTop={20}>
-                    Thursday
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="subtitle2" marginTop={20}>
-                    Friday
-                  </Typography>
-                </Box>
-              </Grid>
+              {daysOfWeek.map((day) => (
+                <Grid item key={day}>
+                  <Box sx={{ textAlign: "center" }}>
+                    <Typography variant="subtitle2" marginTop={20}>
+                      {day}
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
             </Grid>
-            <Box sx={{ width: "99.9%", mt: 4, height: "90px" }}>
+            <Box sx={{ width: "100%", mt: 4, height: "90px" }}>
               <Line data={data} options={options} />
             </Box>
             <Grid container justifyContent="space-evenly">
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="h6" fontSize={30}>
-                    28°
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="h6" fontSize={30}>
-                    26°
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="h6" fontSize={30}>
-                    27°
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="h6" fontSize={30}>
-                    23°
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="h6" fontSize={30}>
-                    30°
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="h6" fontSize={30}>
-                    25°
-                  </Typography>
-                </Box>
-              </Grid>
+              {temperatureData.map((temp) => (
+                <Grid item key={temp}>
+                  <Box sx={{ textAlign: "center" }}>
+                    <Typography variant="h6" fontSize={30}>
+                      {temp}°
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
             </Grid>
           </Box>
         </Grid>
         <Grid item md={2}>
-          <Grid container direction='column' alignItems='center' sx={{ height: "100vh", color:'black', padding:'16px', gap:'16px' }}>
-            <Typography color='white'>Recently searched :</Typography>
-            <RecentlySearched/>
-            <RecentlySearched/>
-            <RecentlySearched/>
-            <RecentlySearched/>
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            sx={{
+              height: "100vh",
+              color: "black",
+              padding: "16px",
+              gap: "16px",
+            }}
+          >
+            <Typography color="white">Recently searched :</Typography>
+            <RecentlySearched />
+            <RecentlySearched />
+            <RecentlySearched />
+            <RecentlySearched />
           </Grid>
         </Grid>
       </Grid>
