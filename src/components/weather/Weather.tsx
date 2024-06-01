@@ -3,18 +3,20 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import RecentlySearched from "../recently-searched/RecentlySearched";
-
-const daysOfWeek = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-];
-const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
+import { useNavigate } from "react-router-dom";
 
 export default function Weather() {
+  const navigate = useNavigate();
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+  ];
+  const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
+
   const data = {
     labels: ["", "", "", "", "", ""], // Empty labels for no numbers
     datasets: [
@@ -68,7 +70,7 @@ export default function Weather() {
     >
       <Box className="clouds-3"></Box>
       <Box sx={{ position: "absolute", top: 16, left: 16 }}>
-        <IconButton aria-label="logout">
+        <IconButton aria-label="logout" onClick={() => navigate("/")}>
           <LogoutIcon />
         </IconButton>
       </Box>
