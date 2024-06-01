@@ -1,12 +1,15 @@
-import { Box, Grid, IconButton, Typography } from "@mui/material";
+import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
-import RecentlySearched from "../recently-searched/RecentlySearched";
+// import RecentlySearched from "../recently-searched/RecentlySearched";
 import { useNavigate } from "react-router-dom";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { debounce } from "chart.js/helpers";
 
 export default function Weather() {
   const navigate = useNavigate();
+
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -17,6 +20,44 @@ export default function Weather() {
   ];
   const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
 
+  // for debounce
+  const [value, setValue] = useState<string>("");
+  const [debouncedValue, setDebouncedValue] = useState<string>("");
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
+
+  const debouncedChange = useCallback(
+    debounce((newValue: string) => setDebouncedValue(newValue), 2000),
+    []
+  );
+
+  useEffect(() => {
+    debouncedChange(value);
+  }, [value, debouncedChange]);
+
+  useEffect(() => {
+    if (debouncedValue) {
+      console.log("Debounced Value:", debouncedValue);
+    }
+  }, [debouncedValue]);
+
+  // showing the date
+  function getFormattedDate(): string {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString("en-US", options);
+    const [weekday, monthDay] = formattedDate.split(", ");
+    return `${weekday}, ${monthDay.split(" ")[0]} ${monthDay.split(" ")[1]}`;
+  }
+
+  // showing the graph
   const data = {
     labels: ["", "", "", "", "", ""], // Empty labels for no numbers
     datasets: [
@@ -74,15 +115,18 @@ export default function Weather() {
           <LogoutIcon />
         </IconButton>
       </Box>
+      <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+        <TextField onChange={handleChange} />
+      </Box>
       <Grid container>
-        <Grid item md={10}>
-          <Box sx={{ textAlign: "center", my: 5 }}>
+        <Grid item md={12}>
+          <Box sx={{ textAlign: "left", mt: 10, mb: 6, ml: 4 }}>
             <Typography variant="h4">Brooklyn, New York, USA</Typography>
-            <Typography variant="subtitle1">Friday, January 4</Typography>
+            <Typography variant="subtitle1">{getFormattedDate()}</Typography>
           </Box>
           <Typography variant="h1">18°</Typography>
           <Typography variant="h6">Stormy with partly cloudy</Typography>
-          <Box sx={{ width: "100%", mt: 4 }}>
+          <Box sx={{ width: "100%", mt: 2 }}>
             <Grid container justifyContent="space-evenly">
               {daysOfWeek.map((day) => (
                 <Grid item key={day}>
@@ -110,13 +154,14 @@ export default function Weather() {
             </Grid>
           </Box>
         </Grid>
-        <Grid item md={2}>
+        {/* <Grid item md={2}>
           <Grid
             container
             direction="column"
             alignItems="center"
             sx={{
-              height: "100vh",
+              height: "80vh",
+              backgroundColor: "pink",
               color: "black",
               padding: "16px",
               gap: "16px",
@@ -128,7 +173,7 @@ export default function Weather() {
             <RecentlySearched />
             <RecentlySearched />
           </Grid>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );
