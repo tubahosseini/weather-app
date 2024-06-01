@@ -14,9 +14,10 @@ export default function Auth() {
         <>
           <Grid
             item
-            xs={14}
+            xs={12}
             sm={8}
             md={5}
+            order={{ xs: 2, sm: 2, md: 2 }} // ensures this item comes second
             component={Paper}
             elevation={6}
             square
@@ -37,7 +38,13 @@ export default function Auth() {
               <SignUp />
             </Box>
           </Grid>
-          <Grid item>
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            md={7}
+            order={{ xs: 1, sm: 1, md: 1 }} // ensures this item comes first
+          >
             <div className="clouds">
               <div className="clouds-1"></div>
               <div className="clouds-2"></div>
@@ -47,7 +54,13 @@ export default function Auth() {
         </>
       ) : (
         <>
-          <Grid item>
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            md={7}
+            order={{ xs: 2, sm: 2, md: 2 }} // ensures this item comes first
+          >
             <div className="clouds">
               <div className="clouds-1"></div>
               <div className="clouds-2"></div>
@@ -56,9 +69,10 @@ export default function Auth() {
           </Grid>
           <Grid
             item
-            xs={14}
+            xs={12}
             sm={8}
             md={5}
+            order={{ xs: 1, sm: 1, md: 1 }} // ensures this item comes second
             component={Paper}
             elevation={6}
             square
