@@ -1,14 +1,16 @@
+import { useState } from "react";
 import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
-// import RecentlySearched from "../recently-searched/RecentlySearched";
 import { useNavigate } from "react-router-dom";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { debounce } from "chart.js/helpers";
+// import RecentlySearched from "../recently-searched/RecentlySearched";
 
 export default function Weather() {
   const navigate = useNavigate();
+  const [city, setCity] = useState("");
+  const [temp, setTemp] = useState(null);
+  const [description, setDescription] = useState("");
 
   const daysOfWeek = [
     "Sunday",
@@ -20,30 +22,7 @@ export default function Weather() {
   ];
   const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
 
-  // for debounce
-  const [value, setValue] = useState<string>("");
-  const [debouncedValue, setDebouncedValue] = useState<string>("");
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
-
-  const debouncedChange = useCallback(
-    debounce((newValue: string) => setDebouncedValue(newValue), 2000),
-    []
-  );
-
-  useEffect(() => {
-    debouncedChange(value);
-  }, [value, debouncedChange]);
-
-  useEffect(() => {
-    if (debouncedValue) {
-      console.log("Debounced Value:", debouncedValue);
-    }
-  }, [debouncedValue]);
-
-  // showing the date
+  // Showing the date
   function getFormattedDate(): string {
     const options: Intl.DateTimeFormatOptions = {
       weekday: "long",
@@ -57,7 +36,7 @@ export default function Weather() {
     return `${weekday}, ${monthDay.split(" ")[0]} ${monthDay.split(" ")[1]}`;
   }
 
-  // showing the graph
+  // Showing the graph
   const data = {
     labels: ["", "", "", "", "", ""], // Empty labels for no numbers
     datasets: [
@@ -94,6 +73,26 @@ export default function Weather() {
     },
   };
 
+  // Function to fetch weather data
+  const fetchWeatherData = async (cityName: any) => {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=d17ef473ffd9b120e464006f224abc14&units=metric`
+      );
+      const data = await response.json();
+      console.log(data);
+      if (data.main) {
+        setTemp(data.main.temp);
+        setDescription(data.weather[0].description);
+        setCity(`${data.name}, ${data.sys.country}`);
+      } else {
+        alert("City not found");
+      }
+    } catch (error) {
+      console.error("Error fetching the weather data: ", error);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -116,16 +115,19 @@ export default function Weather() {
         </IconButton>
       </Box>
       <Box sx={{ position: "absolute", top: 16, right: 16 }}>
-        <TextField onChange={handleChange} />
+        <TextField
+          onChange={(e) => fetchWeatherData(e.target.value)}
+          placeholder="Enter city name"
+        />
       </Box>
       <Grid container>
         <Grid item md={12}>
           <Box sx={{ textAlign: "left", mt: 10, mb: 6, ml: 4 }}>
-            <Typography variant="h4">Brooklyn, New York, USA</Typography>
+            <Typography variant="h4">{city}</Typography>
             <Typography variant="subtitle1">{getFormattedDate()}</Typography>
           </Box>
-          <Typography variant="h1">18°</Typography>
-          <Typography variant="h6">Stormy with partly cloudy</Typography>
+          <Typography variant="h1">{temp}°</Typography>
+          <Typography variant="h6">{description}</Typography>
           <Box sx={{ width: "100%", mt: 2 }}>
             <Grid container justifyContent="space-evenly">
               {daysOfWeek.map((day) => (
