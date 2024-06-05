@@ -1,15 +1,19 @@
 import { useState, useCallback } from "react";
 import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PlaceIcon from "@mui/icons-material/Place";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import { useNavigate } from "react-router-dom";
 import { debounce } from "chart.js/helpers";
+import RecentlySearched from "../recently-searched/RecentlySearched";
 
 export default function Weather() {
   const navigate = useNavigate();
   const [city, setCity] = useState("");
   const [temp, setTemp] = useState(null);
+  const [tempMin, setTempMin] = useState(null);
+  const [tempMax, setTempMax] = useState(null);
   const [description, setDescription] = useState("");
 
   const daysOfWeek = [
@@ -83,6 +87,8 @@ export default function Weather() {
       console.log(data);
       if (data.main) {
         setTemp(data.main.temp);
+        setTempMin(data.main.temp_min);
+        setTempMax(data.main.temp_max);
         setDescription(data.weather[0].description);
         setCity(`${data.name}, ${data.sys.country}`);
       } else {
@@ -93,7 +99,10 @@ export default function Weather() {
     }
   };
 
-  const debounceFetchWeatherData = useCallback(debounce(fetchWeatherData, 1000), []);
+  const debounceFetchWeatherData = useCallback(
+    debounce(fetchWeatherData, 1000),
+    []
+  );
 
   return (
     <Box
@@ -110,27 +119,88 @@ export default function Weather() {
         textShadow: "0px 0px 10px rgba(0,0,0,0.5)",
       }}
     >
-      <Box className="clouds-3"></Box>
-      <Box sx={{ position: "absolute", top: 16, left: 16 }}>
+      {/* <Box className="clouds-3"></Box> */}
+      <Box sx={{ position: "absolute", top: 20, right: 1 }}>
         <IconButton aria-label="logout" onClick={() => navigate("/")}>
-          <LogoutIcon />
+          <LogoutIcon style={{ color: "white" }} />
         </IconButton>
       </Box>
-      <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+      <Box sx={{ position: "absolute", top: 16, right: 46 }}>
         <TextField
           onChange={(e) => debounceFetchWeatherData(e.target.value)}
           placeholder="Enter city name"
         />
       </Box>
       <Grid container>
-        <Grid item md={12}>
-          <Box sx={{ textAlign: "left", mt: 10, mb: 6, ml: 4 }}>
-            <Typography variant="h4">{city}</Typography>
-            <Typography variant="subtitle1">{getFormattedDate()}</Typography>
+        <Grid item md={2}>
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            sx={{
+              height: "100vh",
+              backgroundColor: "#000000ad",
+              overflow: "auto",
+              color: "black",
+              padding: "16px",
+              gap: "16px",
+            }}
+          >
+            <Typography color="white">Recently searched :</Typography>
+            <RecentlySearched />
+            <RecentlySearched />
+            <RecentlySearched />
+            <RecentlySearched />
+          </Grid>
+        </Grid>
+        <Grid item md={10}>
+          <Box
+            sx={{
+              textAlign: "left",
+              mt: 10,
+              mb: 6,
+              ml: 4,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h4">
+              <PlaceIcon
+                style={{
+                  color: "white",
+                  marginRight: "16px",
+                  fontSize: "30px",
+                }}
+              />
+              {city}
+            </Typography>
+            <Typography px={4}>{`(  ${getFormattedDate()}  )`}</Typography>
           </Box>
-          <Typography variant="h1">{temp}°</Typography>
-          <Typography variant="h6">{description}</Typography>
-          <Box sx={{ width: "100%", mt: 2 }}>
+          <Box>
+            <Box display="flex">
+              <Typography
+                justifyContent="flex-start"
+                pl={4}
+                mb={8}
+                variant="h2"
+              >
+                {temp}
+              </Typography>
+              <Box display='flex' flexDirection='column' pl={8} mt='8px' gap='6px'>
+                <Box sx={{backgroundColor:'pink', py:'3px', px: '16px', borderRadius:'16px' }}>{`H ${tempMax}`}</Box>
+                <Box sx={{backgroundColor:'pink', py:'3px', px: '16px', borderRadius:'16px' }}>{`L ${tempMin}`}</Box>
+              </Box>
+            </Box>
+            <Typography
+              display="flex"
+              justifyContent="flex-start"
+              pl={4}
+              variant="h2"
+            >
+              {description}
+            </Typography>
+          </Box>
+          <Box sx={{ width: "100%", mt: 2, position: "fixed", bottom: 15 }}>
             <Grid container justifyContent="space-evenly">
               {daysOfWeek.map((day) => (
                 <Grid item key={day}>
@@ -150,7 +220,7 @@ export default function Weather() {
                 <Grid item key={temp}>
                   <Box sx={{ textAlign: "center" }}>
                     <Typography variant="h6" fontSize={30}>
-                      {temp}°
+                      {temp}
                     </Typography>
                   </Box>
                 </Grid>
