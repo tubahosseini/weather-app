@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import { useNavigate } from "react-router-dom";
-// import RecentlySearched from "../recently-searched/RecentlySearched";
+import { debounce } from "chart.js/helpers";
 
 export default function Weather() {
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ export default function Weather() {
   };
 
   // Function to fetch weather data
-  const fetchWeatherData = async (cityName: any) => {
+  const fetchWeatherData = async (cityName: string) => {
     try {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=d17ef473ffd9b120e464006f224abc14&units=metric`
@@ -92,6 +92,8 @@ export default function Weather() {
       console.error("Error fetching the weather data: ", error);
     }
   };
+
+  const debounceFetchWeatherData = useCallback(debounce(fetchWeatherData, 1000), []);
 
   return (
     <Box
@@ -116,7 +118,7 @@ export default function Weather() {
       </Box>
       <Box sx={{ position: "absolute", top: 16, right: 16 }}>
         <TextField
-          onChange={(e) => fetchWeatherData(e.target.value)}
+          onChange={(e) => debounceFetchWeatherData(e.target.value)}
           placeholder="Enter city name"
         />
       </Box>
@@ -156,26 +158,6 @@ export default function Weather() {
             </Grid>
           </Box>
         </Grid>
-        {/* <Grid item md={2}>
-          <Grid
-            container
-            direction="column"
-            alignItems="center"
-            sx={{
-              height: "80vh",
-              backgroundColor: "pink",
-              color: "black",
-              padding: "16px",
-              gap: "16px",
-            }}
-          >
-            <Typography color="white">Recently searched :</Typography>
-            <RecentlySearched />
-            <RecentlySearched />
-            <RecentlySearched />
-            <RecentlySearched />
-          </Grid>
-        </Grid> */}
       </Grid>
     </Box>
   );
