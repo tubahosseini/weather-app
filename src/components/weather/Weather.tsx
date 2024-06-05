@@ -1,20 +1,26 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PlaceIcon from "@mui/icons-material/Place";
+import { Logout, Place } from "@mui/icons-material";
 import { Line } from "react-chartjs-2";
-import "chart.js/auto";
 import { useNavigate } from "react-router-dom";
 import { debounce } from "chart.js/helpers";
 import RecentlySearched from "../recently-searched/RecentlySearched";
+import "chart.js/auto";
+
+interface SearchData {
+  temperature: number;
+  location: string;
+  description: string;
+}
 
 export default function Weather() {
   const navigate = useNavigate();
   const [city, setCity] = useState("");
-  const [temp, setTemp] = useState(null);
-  const [tempMin, setTempMin] = useState(null);
-  const [tempMax, setTempMax] = useState(null);
+  const [temp, setTemp] = useState<number | null>(null);
+  const [tempMin, setTempMin] = useState<number | null>(null);
+  const [tempMax, setTempMax] = useState<number | null>(null);
   const [description, setDescription] = useState("");
+  const [recentSearches, setRecentSearches] = useState<SearchData[]>([]);
 
   const daysOfWeek = [
     "Sunday",
@@ -25,6 +31,19 @@ export default function Weather() {
     "Friday",
   ];
   const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
+
+  useEffect(() => {
+    // Load recent searches from local storage or any persistent storage
+    const storedSearches = localStorage.getItem("recentSearches");
+    if (storedSearches) {
+      setRecentSearches(JSON.parse(storedSearches));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Store recent searches in local storage
+    localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+  }, [recentSearches]);
 
   // Showing the date
   function getFormattedDate(): string {
@@ -86,6 +105,12 @@ export default function Weather() {
       const data = await response.json();
       console.log(data);
       if (data.main) {
+        const newSearch = {
+          temperature: data.main.temp,
+          location: `${data.name}, ${data.sys.country}`,
+          description: data.weather[0].description,
+        };
+        setRecentSearches((prev) => [newSearch, ...prev.slice(0, 4)]); // Keep only the latest 5 searches
         setTemp(data.main.temp);
         setTempMin(data.main.temp_min);
         setTempMax(data.main.temp_max);
@@ -119,10 +144,9 @@ export default function Weather() {
         textShadow: "0px 0px 10px rgba(0,0,0,0.5)",
       }}
     >
-      {/* <Box className="clouds-3"></Box> */}
       <Box sx={{ position: "absolute", top: 20, right: 1 }}>
         <IconButton aria-label="logout" onClick={() => navigate("/")}>
-          <LogoutIcon style={{ color: "white" }} />
+          <Logout style={{ color: "white" }} />
         </IconButton>
       </Box>
       <Box sx={{ position: "absolute", top: 16, right: 46 }}>
@@ -147,10 +171,14 @@ export default function Weather() {
             }}
           >
             <Typography color="white">Recently searched :</Typography>
-            <RecentlySearched />
-            <RecentlySearched />
-            <RecentlySearched />
-            <RecentlySearched />
+            {recentSearches.map((search, index) => (
+              <RecentlySearched
+                key={index}
+                temperature={search.temperature}
+                location={search.location}
+                description={search.description}
+              />
+            ))}
           </Grid>
         </Grid>
         <Grid item md={10}>
@@ -165,7 +193,7 @@ export default function Weather() {
             }}
           >
             <Typography variant="h4">
-              <PlaceIcon
+              <Place
                 style={{
                   color: "white",
                   marginRight: "16px",
@@ -186,9 +214,29 @@ export default function Weather() {
               >
                 {temp}
               </Typography>
-              <Box display='flex' flexDirection='column' pl={8} mt='8px' gap='6px'>
-                <Box sx={{backgroundColor:'pink', py:'3px', px: '16px', borderRadius:'16px' }}>{`H ${tempMax}`}</Box>
-                <Box sx={{backgroundColor:'pink', py:'3px', px: '16px', borderRadius:'16px' }}>{`L ${tempMin}`}</Box>
+              <Box
+                display="flex"
+                flexDirection="column"
+                pl={8}
+                mt="8px"
+                gap="6px"
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "pink",
+                    py: "3px",
+                    px: "16px",
+                    borderRadius: "16px",
+                  }}
+                >{`H ${tempMax}`}</Box>
+                <Box
+                  sx={{
+                    backgroundColor: "pink",
+                    py: "3px",
+                    px: "16px",
+                    borderRadius: "16px",
+                  }}
+                >{`L ${tempMin}`}</Box>
               </Box>
             </Box>
             <Typography

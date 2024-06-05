@@ -1,7 +1,13 @@
 import { Thunderstorm } from "@mui/icons-material";
 import { Box, Grid, Typography } from "@mui/material";
 
-export default function RecentlySearched() {
+interface RecentlySearchedProps {
+  temperature: number;
+  location: string;
+  description: string;
+}
+
+export default function RecentlySearched({temperature, location, description}:RecentlySearchedProps) {
   return (
     <Box
       sx={{
@@ -9,6 +15,7 @@ export default function RecentlySearched() {
         padding: "16px",
         width: "200px",
         height: "150px",
+        borderRadius: '16px'
       }}
     >
       <Grid container justifyContent="space-between">
@@ -16,13 +23,13 @@ export default function RecentlySearched() {
           <Thunderstorm />
         </Grid>
         <Grid item fontSize={30}>
-          25°
+          {temperature}
         </Grid>
       </Grid>
       <Typography marginTop="16px" fontSize={20}>
-        Liverpool, UK
+        {location}
       </Typography>
-      <Typography marginTop="12px">Partly cloudy</Typography>
+      <Typography marginTop="12px">{description}</Typography>
     </Box>
   );
 }
