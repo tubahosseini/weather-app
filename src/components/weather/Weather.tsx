@@ -240,151 +240,153 @@ export default function Weather() {
           }}
         />
       </Box>
-      <Grid container>
-        <Grid item md={2}>
-          <Typography mb={1} color="white">
-            Recently searched :
-          </Typography>
-          <Grid
-            container
-            direction="column"
-            alignItems="center"
-            sx={{
-              height: "92vh",
-              overflowY: "auto",
-              flexWrap: "nowrap",
-              color: "black",
-              padding: "16px",
-              gap: "16px",
-            }}
-          >
-            {recentSearches.map((search, index) => (
-              <RecentlySearched
-                key={index}
-                temperature={search.temperature}
-                location={search.location}
-                description={search.description}
-                icon={`https://openweathermap.org/img/w/${search.icon}.png`}
-              />
-            ))}
-          </Grid>
-        </Grid>
-        <Grid item md={10}>
-          <Box
-            sx={{
-              textAlign: "left",
-              mt: 10,
-              mb: 6,
-              ml: 4,
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h4">
-              <Place
-                style={{
-                  color: "white",
-                  marginRight: "16px",
-                  fontSize: "30px",
-                }}
-              />
-              {city}
+      {city && (
+        <Grid container>
+          <Grid item md={2}>
+            <Typography mb={1} color="white">
+              Recently searched :
             </Typography>
-            <Typography px={4}>{`(  ${getFormattedDate()}  )`}</Typography>
-          </Box>
-          <Box>
-            <Box display="flex">
+            <Grid
+              container
+              direction="column"
+              alignItems="center"
+              sx={{
+                height: "92vh",
+                overflowY: "auto",
+                flexWrap: "nowrap",
+                color: "black",
+                padding: "16px",
+                gap: "16px",
+              }}
+            >
+              {recentSearches.map((search, index) => (
+                <RecentlySearched
+                  key={index}
+                  temperature={search.temperature}
+                  location={search.location}
+                  description={search.description}
+                  icon={`https://openweathermap.org/img/w/${search.icon}.png`}
+                />
+              ))}
+            </Grid>
+          </Grid>
+          <Grid item md={10}>
+            <Box
+              sx={{
+                textAlign: "left",
+                mt: 10,
+                mb: 6,
+                ml: 4,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="h4">
+                <Place
+                  style={{
+                    color: "white",
+                    marginRight: "16px",
+                    fontSize: "30px",
+                  }}
+                />
+                {city}
+              </Typography>
+              <Typography px={4}>{`(  ${getFormattedDate()}  )`}</Typography>
+            </Box>
+            <Box>
+              <Box display="flex">
+                <Typography
+                  justifyContent="flex-start"
+                  pl={4}
+                  mb={8}
+                  variant="h2"
+                >
+                  {`${temp}°`}
+                </Typography>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  pl={8}
+                  mt="8px"
+                  gap="6px"
+                >
+                  <Grid
+                    container
+                    sx={{
+                      display: "flex",
+                      backgroundColor: "black",
+                      py: "3px",
+                      px: "30px",
+                      borderRadius: "16px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Grid item sx={{ alignSelf: "flex-start" }}>
+                      H
+                    </Grid>
+                    <Grid item sx={{ alignSelf: "flex-end" }}>
+                      {`${tempMax}°`}
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    sx={{
+                      display: "flex",
+                      backgroundColor: "black",
+                      py: "3px",
+                      px: "30px",
+                      borderRadius: "16px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Grid item sx={{ alignSelf: "flex-start" }}>
+                      L
+                    </Grid>
+                    <Grid item sx={{ alignSelf: "flex-end" }}>
+                      {`${tempMin}°`}
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Box>
               <Typography
+                display="flex"
                 justifyContent="flex-start"
                 pl={4}
-                mb={8}
                 variant="h2"
               >
-                {`${temp}°`}
+                {description}
               </Typography>
-              <Box
-                display="flex"
-                flexDirection="column"
-                pl={8}
-                mt="8px"
-                gap="6px"
-              >
-                <Grid
-                  container
-                  sx={{
-                    display: "flex",
-                    backgroundColor: "black",
-                    py: "3px",
-                    px: "30px",
-                    borderRadius: "16px",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Grid item sx={{ alignSelf: "flex-start" }}>
-                    H
+            </Box>
+            <Box sx={{ width: "100%", mt: 2, position: "fixed", bottom: 15 }}>
+              <Grid container justifyContent="space-evenly">
+                {daysOfWeek.map((day) => (
+                  <Grid item key={day}>
+                    <Box sx={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" marginTop={20}>
+                        {day}
+                      </Typography>
+                    </Box>
                   </Grid>
-                  <Grid item sx={{ alignSelf: "flex-end" }}>
-                    {`${tempMax}°`}
-                  </Grid>
-                </Grid>
-                <Grid
-                  container
-                  sx={{
-                    display: "flex",
-                    backgroundColor: "black",
-                    py: "3px",
-                    px: "30px",
-                    borderRadius: "16px",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Grid item sx={{ alignSelf: "flex-start" }}>
-                    L
-                  </Grid>
-                  <Grid item sx={{ alignSelf: "flex-end" }}>
-                    {`${tempMin}°`}
-                  </Grid>
-                </Grid>
+                ))}
+              </Grid>
+              <Box sx={{ width: "100%", mt: 4, height: "90px" }}>
+                <Line data={data} options={options} />
               </Box>
+              <Grid container justifyContent="space-evenly">
+                {temperatureData.map((temp) => (
+                  <Grid item key={temp}>
+                    <Box sx={{ textAlign: "center" }}>
+                      <Typography variant="h6" fontSize={30}>
+                        {`${temp}°`}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
             </Box>
-            <Typography
-              display="flex"
-              justifyContent="flex-start"
-              pl={4}
-              variant="h2"
-            >
-              {description}
-            </Typography>
-          </Box>
-          <Box sx={{ width: "100%", mt: 2, position: "fixed", bottom: 15 }}>
-            <Grid container justifyContent="space-evenly">
-              {daysOfWeek.map((day) => (
-                <Grid item key={day}>
-                  <Box sx={{ textAlign: "center" }}>
-                    <Typography variant="subtitle2" marginTop={20}>
-                      {day}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-            <Box sx={{ width: "100%", mt: 4, height: "90px" }}>
-              <Line data={data} options={options} />
-            </Box>
-            <Grid container justifyContent="space-evenly">
-              {temperatureData.map((temp) => (
-                <Grid item key={temp}>
-                  <Box sx={{ textAlign: "center" }}>
-                    <Typography variant="h6" fontSize={30}>
-                      {`${temp}°`}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Box>
   );
 }
