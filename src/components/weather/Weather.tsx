@@ -1,5 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
-import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  TextField,
+  Typography,
+  Autocomplete,
+} from "@mui/material";
 import { Logout, Place } from "@mui/icons-material";
 import { Line } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +20,11 @@ interface SearchData {
   description: string;
 }
 
+interface City {
+  name: string;
+  country: string;
+}
+
 export default function Weather() {
   const navigate = useNavigate();
   const [city, setCity] = useState("");
@@ -21,16 +33,20 @@ export default function Weather() {
   const [tempMax, setTempMax] = useState<number | null>(null);
   const [description, setDescription] = useState("");
   const [recentSearches, setRecentSearches] = useState<SearchData[]>([]);
+  const [cityOptions, setCityOptions] = useState<City[]>([]);
+  const [inputValue, setInputValue] = useState("");
 
   const daysOfWeek = [
-    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
+    "Saturday",
+    "Sunday",
+    "Sunday",
   ];
-  const temperatureData = [28, 26, 27, 23, 30, 25]; // Example temperature data
+  const temperatureData = [27, 28, 26, 27, 23, 30, 25, 25]; // Example temperature data
 
   useEffect(() => {
     // Load recent searches from local storage or any persistent storage
@@ -44,6 +60,39 @@ export default function Weather() {
     // Store recent searches in local storage
     localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
   }, [recentSearches]);
+
+  // Fetch city suggestions
+  const fetchCitySuggestions = async (query: string) => {
+    try {
+      const response = await fetch(
+        `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}`,
+        {
+          headers: {
+            "x-rapidapi-key":
+              "e216deee7bmshdbf92d293533befp1f3b92jsn9b600800bcac",
+            "x-rapidapi-host": "wft-geo-db.p.rapidapi.com",
+          },
+        }
+      );
+      const data = await response.json();
+      const cities = data.data.map((city: any) => ({
+        name: city.city,
+        country: city.country,
+      }));
+      setCityOptions(cities);
+    } catch (error) {
+      console.error("Error fetching city suggestions: ", error);
+    }
+  };
+
+  const debounceFetchCitySuggestions = useCallback(
+    debounce((value: string) => {
+      if (value) {
+        fetchCitySuggestions(value);
+      }
+    }, 500),
+    []
+  );
 
   // Showing the date
   function getFormattedDate(): string {
@@ -61,7 +110,7 @@ export default function Weather() {
 
   // Showing the graph
   const data = {
-    labels: ["", "", "", "", "", ""], // Empty labels for no numbers
+    labels: ["", "", "", "", "", "", ""], // Empty labels for no numbers
     datasets: [
       {
         data: temperatureData,
@@ -110,7 +159,7 @@ export default function Weather() {
           location: `${data.name}, ${data.sys.country}`,
           description: data.weather[0].description,
         };
-        setRecentSearches((prev) => [newSearch, ...prev.slice(0, 4)]); // Keep only the latest 5 searches
+        setRecentSearches((prev) => [newSearch, ...prev.slice(0, 3)]); // Keep only the latest 4 searches
         setTemp(data.main.temp);
         setTempMin(data.main.temp_min);
         setTempMax(data.main.temp_max);
@@ -144,33 +193,58 @@ export default function Weather() {
         textShadow: "0px 0px 10px rgba(0,0,0,0.5)",
       }}
     >
+      <Box className="clouds-3"></Box>
       <Box sx={{ position: "absolute", top: 20, right: 1 }}>
         <IconButton aria-label="logout" onClick={() => navigate("/")}>
           <Logout style={{ color: "white" }} />
         </IconButton>
       </Box>
-      <Box sx={{ position: "absolute", top: 16, right: 46 }}>
-        <TextField
-          onChange={(e) => debounceFetchWeatherData(e.target.value)}
-          placeholder="Enter city name"
+      <Box sx={{ position: "absolute", top: 16, right: 46, width: "300px" }}>
+        <Autocomplete
+          freeSolo
+          options={cityOptions.map(
+            (option) => `${option.name}, ${option.country}`
+          )}
+          inputValue={inputValue}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+            console.log(event);
+            debounceFetchCitySuggestions(newInputValue);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              InputLabelProps={{ style: { color: "#fff" } }}
+              placeholder="Enter city name"
+            />
+          )}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              debounceFetchWeatherData(newValue);
+              console.log(event);
+            }
+          }}
         />
       </Box>
       <Grid container>
         <Grid item md={2}>
+          <Typography mb={1} color="white">
+            Recently searched :
+          </Typography>
           <Grid
             container
             direction="column"
             alignItems="center"
             sx={{
-              height: "100vh",
-              backgroundColor: "#000000ad",
-              overflow: "auto",
+              height: "92vh",
+              // backgroundColor: "#000000ad",
+              overflowY: "auto",
+              flexWrap: "nowrap",
               color: "black",
               padding: "16px",
               gap: "16px",
             }}
           >
-            <Typography color="white">Recently searched :</Typography>
             {recentSearches.map((search, index) => (
               <RecentlySearched
                 key={index}
@@ -212,7 +286,7 @@ export default function Weather() {
                 mb={8}
                 variant="h2"
               >
-                {temp}
+                {`${temp}°`}
               </Typography>
               <Box
                 display="flex"
@@ -221,22 +295,42 @@ export default function Weather() {
                 mt="8px"
                 gap="6px"
               >
-                <Box
+                <Grid
+                  container
                   sx={{
-                    backgroundColor: "pink",
+                    display: "flex",
+                    backgroundColor: "black",
                     py: "3px",
-                    px: "16px",
+                    px: "30px",
                     borderRadius: "16px",
+                    justifyContent: "space-between",
                   }}
-                >{`H ${tempMax}`}</Box>
-                <Box
+                >
+                  <Grid item sx={{ alignSelf: "flex-start" }}>
+                    H
+                  </Grid>
+                  <Grid item sx={{ alignSelf: "flex-end" }}>
+                    {`${tempMax}°`}
+                  </Grid>
+                </Grid>
+                <Grid
+                  container
                   sx={{
-                    backgroundColor: "pink",
+                    display: "flex",
+                    backgroundColor: "black",
                     py: "3px",
-                    px: "16px",
+                    px: "30px",
                     borderRadius: "16px",
+                    justifyContent: "space-between",
                   }}
-                >{`L ${tempMin}`}</Box>
+                >
+                  <Grid item sx={{ alignSelf: "flex-start" }}>
+                    L
+                  </Grid>
+                  <Grid item sx={{ alignSelf: "flex-end" }}>
+                    {`${tempMin}°`}
+                  </Grid>
+                </Grid>
               </Box>
             </Box>
             <Typography

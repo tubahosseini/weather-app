@@ -7,7 +7,11 @@ interface RecentlySearchedProps {
   description: string;
 }
 
-export default function RecentlySearched({temperature, location, description}:RecentlySearchedProps) {
+export default function RecentlySearched({
+  temperature,
+  location,
+  description,
+}: RecentlySearchedProps) {
   return (
     <Box
       sx={{
@@ -15,7 +19,7 @@ export default function RecentlySearched({temperature, location, description}:Re
         padding: "16px",
         width: "200px",
         height: "150px",
-        borderRadius: '16px'
+        borderRadius: "16px",
       }}
     >
       <Grid container justifyContent="space-between">
@@ -23,7 +27,7 @@ export default function RecentlySearched({temperature, location, description}:Re
           <Thunderstorm />
         </Grid>
         <Grid item fontSize={30}>
-          {temperature}
+          {`${temperature}°`}
         </Grid>
       </Grid>
       <Typography marginTop="16px" fontSize={20}>
