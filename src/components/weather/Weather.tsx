@@ -18,6 +18,7 @@ interface SearchData {
   temperature: number;
   location: string;
   description: string;
+  icon: string;
 }
 
 interface City {
@@ -44,13 +45,12 @@ export default function Weather() {
     "Friday",
     "Saturday",
     "Sunday",
-    "Sunday",
   ];
-  const temperatureData = [27, 28, 26, 27, 23, 30, 25, 25]; // Example temperature data
+  const temperatureData = [27, 28, 26, 27, 23, 30, 25]; // Example temperature data
 
   useEffect(() => {
-    // Load recent searches from local storage or any persistent storage
     const storedSearches = localStorage.getItem("recentSearches");
+    // Load recent searches from local storage or any persistent storage
     if (storedSearches) {
       setRecentSearches(JSON.parse(storedSearches));
     }
@@ -90,7 +90,7 @@ export default function Weather() {
       if (value) {
         fetchCitySuggestions(value);
       }
-    }, 500),
+    }, 200),
     []
   );
 
@@ -107,10 +107,9 @@ export default function Weather() {
     const [weekday, monthDay] = formattedDate.split(", ");
     return `${weekday}, ${monthDay.split(" ")[0]} ${monthDay.split(" ")[1]}`;
   }
-
-  // Showing the graph
+  // graph informations
   const data = {
-    labels: ["", "", "", "", "", "", ""], // Empty labels for no numbers
+    labels: ["", "", "", "", "", "", ""],
     datasets: [
       {
         data: temperatureData,
@@ -145,7 +144,6 @@ export default function Weather() {
     },
   };
 
-  // Function to fetch weather data
   const fetchWeatherData = async (cityName: string) => {
     try {
       const response = await fetch(
@@ -158,8 +156,9 @@ export default function Weather() {
           temperature: data.main.temp,
           location: `${data.name}, ${data.sys.country}`,
           description: data.weather[0].description,
+          icon: data.weather[0].icon, // Add icon data
         };
-        setRecentSearches((prev) => [newSearch, ...prev.slice(0, 3)]); // Keep only the latest 4 searches
+        setRecentSearches((prev) => [newSearch, ...prev.slice(0, 3)]);
         setTemp(data.main.temp);
         setTempMin(data.main.temp_min);
         setTempMax(data.main.temp_max);
@@ -174,7 +173,7 @@ export default function Weather() {
   };
 
   const debounceFetchWeatherData = useCallback(
-    debounce(fetchWeatherData, 1000),
+    debounce(fetchWeatherData, 300),
     []
   );
 
@@ -193,7 +192,6 @@ export default function Weather() {
         textShadow: "0px 0px 10px rgba(0,0,0,0.5)",
       }}
     >
-      <Box className="clouds-3"></Box>
       <Box sx={{ position: "absolute", top: 20, right: 1 }}>
         <IconButton aria-label="logout" onClick={() => navigate("/")}>
           <Logout style={{ color: "white" }} />
@@ -216,6 +214,22 @@ export default function Weather() {
               {...params}
               InputLabelProps={{ style: { color: "#fff" } }}
               placeholder="Enter city name"
+              sx={{
+                "& fieldset": {
+                  borderColor: "#666",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "&:hover fieldset": {
+                    borderColor: "#666",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#666",
+                  },
+                  "& input": {
+                    color: "white",
+                  },
+                },
+              }}
             />
           )}
           onChange={(event, newValue) => {
@@ -237,7 +251,6 @@ export default function Weather() {
             alignItems="center"
             sx={{
               height: "92vh",
-              // backgroundColor: "#000000ad",
               overflowY: "auto",
               flexWrap: "nowrap",
               color: "black",
@@ -251,6 +264,7 @@ export default function Weather() {
                 temperature={search.temperature}
                 location={search.location}
                 description={search.description}
+                icon={`https://openweathermap.org/img/w/${search.icon}.png`}
               />
             ))}
           </Grid>
@@ -362,7 +376,7 @@ export default function Weather() {
                 <Grid item key={temp}>
                   <Box sx={{ textAlign: "center" }}>
                     <Typography variant="h6" fontSize={30}>
-                      {temp}
+                      {`${temp}°`}
                     </Typography>
                   </Box>
                 </Grid>
